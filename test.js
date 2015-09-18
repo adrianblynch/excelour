@@ -39,7 +39,7 @@ describe('API', function () {
 
 	})
 
-	it('Create request', function (done) {
+	it('Get request', function (done) {
 
 		server.inject({url: '/request', method: 'post', payload: payload}, function (response) {
 
@@ -47,9 +47,7 @@ describe('API', function () {
 
 			server.inject({url: '/request/' + id}, function (response) {
 				expect(response.statusCode).to.equal(200)
-				console.log(response.result);
 				expect(response.result).to.only.include(['status'])
-				//expect(response.result.status).to.equal(true)
 				done()
 			})
 
