@@ -1,0 +1,11 @@
+{
+  "name": "excelour",
+  "version": "1.0.0",
+  "description": "A simple Excel generation service",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Adrian Lynch (adi_ady_ade@hotmail.com)",
+  "license": "MIT"
+}
