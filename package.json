@@ -4,8 +4,8 @@
   "description": "A simple Excel generation service",
   "main": "index.js",
   "scripts": {
-    "start":"node index.js",
-    "test": "jasmine-node --verbose --matchall test.js"
+    "start": "node ./index.js",
+    "test": "lab ./test.js"
   },
   "author": "Adrian Lynch (adi_ady_ade@hotmail.com)",
   "license": "MIT",
@@ -15,7 +15,7 @@
     "node-uuid": "^1.4.3"
   },
   "devDependencies": {
-    "frisby": "^0.8.5",
-    "jasmine-node": "^1.14.5"
+    "code": "^1.5.0",
+    "lab": "^5.17.0"
   }
 }

@@ -1,5 +1,14 @@
-var frisby = require('frisby')
-var URL = 'http://localhost:8000'
+var Code = require('code')
+var Lab = require('lab');
+
+var lab = exports.lab = Lab.script();
+var describe = lab.describe;
+var it = lab.it;
+var before = lab.before;
+var after = lab.after;
+var expect = Code.expect;
+
+var server = require('./server.js')
 var payload = {
 	data: [
 		[1, 2, 3, 4, 5],
@@ -8,29 +17,44 @@ var payload = {
 	priority: 100
 }
 
-frisby.create('Root')
-	.get(URL + '/')
-	.expectStatus(200)
-	.expectJSON({ok: true})
-.toss()
+describe('API', function () {
 
-frisby.create('Create request')
-	.post(URL + '/request', payload)
-	.expectStatus(201)
-	.expectJSONTypes({
-		id: String
+	it('Root', function (done) {
+
+		server.inject({url: '/'}, function (response) {
+			expect(response.statusCode).to.equal(200)
+			expect(response.result.ok).to.equal(true)
+			done()
+		})
+
 	})
-.toss()
 
-frisby.create('Create request')
-	.post(URL + '/request', payload)
-	.afterJSON(function (request) {
-		frisby.create('Get request')
-			.get(URL + '/request/' + request.id)
-			.expectStatus(200)
-			.expectJSONTypes({
-				status: String
+	it('Create request', function (done) {
+
+		server.inject({url: '/request', method: 'post', payload: payload}, function (response) {
+			expect(response.statusCode).to.equal(201)
+			expect(response.result).to.only.include(['id'])
+			done()
+		})
+
+	})
+
+	it('Create request', function (done) {
+
+		server.inject({url: '/request', method: 'post', payload: payload}, function (response) {
+
+			var id = response.result.id
+
+			server.inject({url: '/request/' + id}, function (response) {
+				expect(response.statusCode).to.equal(200)
+				console.log(response.result);
+				expect(response.result).to.only.include(['status'])
+				//expect(response.result.status).to.equal(true)
+				done()
 			})
-		.toss()
+
+		})
+
 	})
-.toss()
+
+})
