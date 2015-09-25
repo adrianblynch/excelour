@@ -1,4 +1,6 @@
-var server = require('./server.js')
+var store = require('./store');
+var server = require('./server')
+var worker = require('./worker')
 
 ////////////
 // Server //
@@ -12,4 +14,6 @@ server.start(function () {
 // Worker //
 ////////////
 
-// TODO: Poll the STORE for pending jobs
+worker.start(function () {
+	console.log('Worker running')
+})
