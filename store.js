@@ -1,6 +1,6 @@
 var jsop = require('jsop')
 
-var disk = jsop('disk.json')
+var disk = {} //jsop('disk.json')
 
 const store = {}
 

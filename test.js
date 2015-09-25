@@ -13,7 +13,8 @@ var server = require('./server')
 var payload = {
 	data: [
 		[1, 2, 3, 4, 5],
-		[5, 4, 3, 2, 1]
+		[5, 4, 3, 2, 1],
+		[2, 4, 6, 8, 10]
 	],
 	priority: 100
 }
@@ -48,7 +49,7 @@ describe('API', function () {
 
 			server.inject({url: '/request/' + id}, function (response) {
 				expect(response.statusCode).to.equal(200)
-				expect(response.result).to.only.include(['status', 'downloads'])
+				expect(response.result).to.only.include(['status', 'downloads', 'file'])
 				done()
 			})
 
