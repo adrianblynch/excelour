@@ -8,7 +8,7 @@ This is a project to aid the teaching of Node and Hapi to colleagues.
 
 - It has been "tested" on Node 4.x.x
 - It is far from best practice
-    - The queue is saved to disk ~~in memory~~
+    - The queue is saved ~~in memory~~~~to disk~~ in memory
     - I use sync methods to ease coding
     - Both the API, polling code and excel generation is all bundled together
     - I may have introduced a security hole by allowing the user to inject into a response header
