@@ -1,41 +1,43 @@
-process.STORE = {}
+var jsop = require('jsop')
+
+var disk = jsop('disk.json')
 
 const store = {}
 
 store.get = function (key) {
-	return key ? process.STORE[key] : process.STORE
+	return key ? disk[key] : disk
 }
 
 store.add = function (key, val) {
-	process.STORE[key] = val
+	disk[key] = val
 }
 
 store.exists = function (key) {
-	return (key in process.STORE)
+	return (key in disk)
 }
 
 store.incrementDownloads = function (key) {
-	process.STORE[key].downloads++
+	disk[key].downloads++
 }
 
 store.setStatus = function (key, status) {
-	process.STORE[key].status = status
+	disk[key].status = status
 }
 
 store.setFile = function (key, file) {
-	process.STORE[key].file = file
+	disk[key].file = file
 }
 
 store.getData = function (key) {
-	return process.STORE[key].data
+	return disk[key].data
 }
 
 store.getStatus = function (key) {
-	return process.STORE[key].status
+	return disk[key].status
 }
 
 store.getFile = function (key) {
-	return process.STORE[key].file
+	return disk[key].file
 }
 
 module.exports = store

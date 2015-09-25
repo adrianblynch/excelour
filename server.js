@@ -94,7 +94,11 @@ server.route({
 
 			var val = store.get(key)
 
-			return reply({status: val.status, downloads: val.downloads})
+			return reply({
+				status: val.status,
+				downloads: val.downloads,
+				file: val.file
+			})
 
 		}
 
@@ -115,12 +119,13 @@ server.route({
 	handler: function (request, reply) {
 
 		var key = request.params.id
-		var fileName = key + '.json'
+		var fileName = store.getFile(key)
+		var fileRename = request.query.name || fileName
 		var filePath = './files/' + fileName
 
 		if (store.exists(key) && fs.statSync(filePath)) {
 			store.incrementDownloads(key)
-			return reply.file(filePath).header('Content-disposition', 'attachment; filename=' + fileName).header('Content-type', 'application/json')
+			return reply.file(filePath).header('Content-disposition', 'attachment; filename=' + fileRename).header('Content-type', 'application/json')
 		}
 
 		reply('File not found').code(404)
@@ -130,6 +135,9 @@ server.route({
 		validate: {
 			params: {
 				id: Joi.string().guid().required()
+			},
+			query: {
+				name: Joi.string().optional()
 			}
 		}
 	}

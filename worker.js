@@ -11,11 +11,7 @@ function checkQueue() {
 
 		if (store.getStatus(key) === 'pending') {
 
-			// Start by saving to a json file
-			const fileName = key + '.json'
-			fs.writeFileSync('./files/' + fileName, JSON.stringify(store.getData(key)))
-			store.setFile(key, key + '.json')
-			store.setStatus(key, 'done')
+			const fileName = key + '.xlsx'
 
 			// Now let's create an excel file
 			var workbook = new Excel.Workbook();
@@ -25,8 +21,9 @@ function checkQueue() {
 				sheet.addRow(item)
 			})
 
-			workbook.xlsx.writeFile('./files/' + key + '.xlsx').then(function() {
-				console.log("Done writing", store.getFile(key));
+			workbook.xlsx.writeFile('./files/' + fileName).then(function() {
+				store.setFile(key, fileName)
+				store.setStatus(key, 'done')
 			});
 
 		}
