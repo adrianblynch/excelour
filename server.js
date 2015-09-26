@@ -2,142 +2,50 @@ var Hapi = require('hapi')
 var Joi = require('joi')
 var uuid = require('node-uuid')
 var fs = require('fs')
-var store = require('./store')
+var Excel = require('exceljs')
 
 var server = new Hapi.Server()
 
-server.connection({ host: 'localhost', port: 8000 })
-
-server.register(require('inert'), function (err) {
-
+server.connection({
+	host: 'localhost',
+	port: 8000
 })
+
+server.register(require('inert'), () => {})
 
 server.route({
 	method: 'GET', path:'/',
-	handler: function (request, reply) {
-		reply({ok: true})
-	}
+	handler: (request, reply) => reply({ok: true})
 })
 
-// View the store
 server.route({
-	method: 'GET', path:'/store',
-	handler: function (request, reply) {
-		reply(store.get())
-	}
-})
+	method: 'POST', path:'/excel',
+	handler: (request, reply) => {
 
-// Create an excel generation request
-server.route({
-	method: 'POST', path:'/request',
-	handler: function (request, reply) {
+		var workbook = new Excel.Workbook()
+		var sheet = workbook.addWorksheet('Sheet 1')
+		var fileName = uuid.v1() + '.xlsx'
+		var filePath = './files/' + fileName
 
-		var key = uuid.v1()
-		var val = {
-			data: request.payload.data,
-			priority: request.payload.priority,
-			status: 'pending',
-			downloads: 0,
-			file: null
-		}
+		request.payload.data.forEach(item => sheet.addRow(item))
 
-		store.add(key, val);
+		workbook.xlsx.writeFile(filePath).then(() => {
 
-		reply({id: key}).code(201)
+			reply
+				.file(filePath)
+				.header('Content-disposition', 'attachment; filename=' + (request.query.fileName || fileName))
+				.header('Content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
+			// Until we have a tail event set up - Delete the file later
+			setTimeout(() => fs.unlink(filePath), 5000)
+
+		})
 
 	},
 	config: {
 		validate: {
 			payload: {
-				data: Joi.array().required(),
-				priority: Joi.number().default(50)
-			}
-		}
-	}
-})
-
-// A fake route to quickly create an excel generation request
-server.route({
-	method: 'GET', path:'/request',
-	handler: function (request, reply) {
-
-		var key = uuid.v1()
-		var val = {
-			data: [
-				[1, 2, 3, 4, 5],
-				[5, 4, 3, 2, 1]
-			],
-			priority: 100,
-			status: 'pending',
-			downloads: 0,
-			file: null
-		}
-		var receipt = {
-			id: key
-		}
-
-		store.add(key, val)
-
-		reply(receipt).code(201)
-
-	}
-})
-
-// Get the state of a request
-server.route({
-	method: 'GET', path:'/request/{id}',
-	handler: function (request, reply) {
-
-		var key = request.params.id
-
-		if (key in store.get()) {
-
-			var val = store.get(key)
-
-			return reply({
-				status: val.status,
-				downloads: val.downloads,
-				file: val.file
-			})
-
-		}
-
-		reply('Request not found').code(404)
-
-	},
-	config: {
-		validate: {
-			params: {
-				id: Joi.string().guid().required()
-			}
-		}
-	}
-})
-
-server.route({
-	method: 'GET', path:'/request/{id}/file',
-	handler: function (request, reply) {
-
-		var key = request.params.id
-		var fileName = store.getFile(key)
-		var fileRename = request.query.name || fileName
-		var filePath = './files/' + fileName
-
-		if (store.exists(key) && fs.statSync(filePath)) {
-			store.incrementDownloads(key)
-			return reply.file(filePath).header('Content-disposition', 'attachment; filename=' + fileRename).header('Content-type', 'application/json')
-		}
-
-		reply('File not found').code(404)
-
-	},
-	config: {
-		validate: {
-			params: {
-				id: Joi.string().guid().required()
-			},
-			query: {
-				name: Joi.string().optional()
+				data: Joi.array().required()
 			}
 		}
 	}
