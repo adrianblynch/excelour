@@ -12,3 +12,17 @@ This is a project to aid the teaching of Node and Hapi to colleagues.
 - Files are currently saved to disk
 - Files are removed in a crude setTimeout - Should be done in a tail event or better still, streamed and not saved to disk
 - I started using Frisby.js for testing the API but the lack of set-up and tear-down proved troublesome. Switched to Lab
+
+## Usage
+
+```
+npm install
+
+node index.js
+```
+
+## Testing
+
+```
+npm test
+```
