@@ -10,7 +10,7 @@
   "author": "Adrian Lynch (adi_ady_ade@hotmail.com)",
   "license": "MIT",
   "dependencies": {
-    "exceljs": "^0.2.3",
+    "exceljs": "^0.3.1",
     "hapi": "^10.0.0",
     "inert": "^3.0.1",
     "joi": "^6.7.1",
